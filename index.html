@@ -20,12 +20,14 @@
                 <ul>
                     <li>
                         <label for="title">Title</label>
-                        <input type="text" id="title" name="title" required="required">        
+                        <input type="text" id="title" name="title" required>
+                        <span id="error-title"></span>     
                     </li>
 
                     <li>
                         <label for="author">Author</label>
-                        <input type="text" id="author" name="author">        
+                        <input type="text" id="author" name="author" required>        
+                        <span id="error-author"></span>     
                     </li>
                     
                     <li>
@@ -36,7 +38,6 @@
                     <li>
                         <label for="read" class="switch">Have you read this book yet?</label>
                         <input type="checkbox" name="read" id="read"> 
-                               
                     </li>
                 </ul>
             </form>

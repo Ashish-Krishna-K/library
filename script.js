@@ -1,25 +1,49 @@
-const form = document.getElementById('input-form')
-const title = form.querySelector('#title');
-const author = form.querySelector('#author');
-const pages = form.querySelector('#pages');
-const read = form.querySelector('#read');
-const cardArea = document.querySelector('#cards');
-const submit = document.getElementById('submit');
-const clear = document.getElementById('clear')
+const domElements = {
+    form: document.getElementById('input-form'),
+    title: document.querySelector('#title'),
+    author: document.querySelector('#author'),
+    pages: document.querySelector('#pages'),
+    read: document.querySelector('#read'),
+    cardArea: document.querySelector('#cards'),
+    submit: document.getElementById('submit'),
+    clear: document.getElementById('clear'),
+    titleError: document.querySelector('#error-title'),
+    authorError: document.querySelector('#error-author'),
 
-let inputTitle = null;
-let inputAuthor = null;
-let inputPages = null;
-let inputRead = false;
+}
+
+const errorMessages = {
+    blankTitle: 'Please provide a valid book name',
+    blankAuthor: 'Please provide a valid author name',
+}
+
 
 let myLibrary = [];
 
-function Book (title, author, pages, status) {
+class Book {
+    constructor (title, author, pages, status) {
     this.title = title,
     this.author = author,
     this.pages = pages,
     this.status = status
+    };
 };
+
+domElements.title.addEventListener('blur', function(){
+    if (title.validity.valid) {
+    domElements.titleError.textContent = '';
+    return;
+    }
+    domElements.titleError.textContent = errorMessages.blankTitle;
+});
+
+domElements.author.addEventListener('blur', function(){
+    if (author.validity.valid) {
+    domElements.authorError.textContent = '';
+    return;
+    }
+    domElements.authorError.textContent = errorMessages.blankAuthor;
+});
 
 clear.addEventListener('click', clearAll)
 
@@ -27,14 +51,18 @@ submit.addEventListener('click', createBooks);
 
 function createBooks() {
 
-    inputTitle = title.value;
-    inputAuthor = author.value;
-    inputPages = pages.value;
-    inputRead = read.checked;
-
-    if(!inputTitle) {
+    if (!title.validity.valid) {
+        domElements.titleError.textContent = errorMessages.blankTitle;
         return;
     }
+    if (!author.validity.valid) {
+        domElements.authorError.textContent = errorMessages.blankAuthor;
+        return;
+    }
+    let inputTitle = title.value;
+    let inputAuthor = author.value;
+    let inputPages = pages.value;
+    let inputRead = read.checked;
 
     myLibrary.push(new Book(inputTitle, inputAuthor, inputPages, inputRead));
 
@@ -42,6 +70,12 @@ function createBooks() {
     clearAll();
 };
 
+function clearAll() {
+    title.value = '';
+    author.value = '';
+    pages.value = '';
+    read.checked = false;
+}
 
 function createCards() {
     const lastIndex = myLibrary.length - 1;
@@ -50,9 +84,9 @@ function createCards() {
     const statusToggle = document.createElement('input');
 
     let book = myLibrary[lastIndex];
+
     const divBook = document.createElement('div');
     divBook.classList.add('book-card');
-
 
     divBook.appendChild(deleteBook);
     deleteBook.classList.add('delete');
@@ -70,7 +104,9 @@ function createCards() {
 
     const bookPages = document.createElement('div');
     bookPages.classList.add('pages');
-    bookPages.innerText = `${book.pages} pages`;
+    if (book.pages) {
+        bookPages.innerText = `${book.pages} pages`;
+    }
     divBook.appendChild(bookPages);
 
     statusToggle.type = 'checkbox';
@@ -80,7 +116,7 @@ function createCards() {
 
     book.status ? divBook.classList.add('read') : divBook.classList.add('not-read');
 
-    cardArea.appendChild(divBook);
+    domElements.cardArea.appendChild(divBook);
 
     const deleteButton = divBook.querySelector('.delete');
 
@@ -106,11 +142,12 @@ function createCards() {
         }
     });
 
+    return {
+        deleteButton,
+        toggleButton
+    }
+
 };
 
-function clearAll() {
-    title.value = '';
-    author.value = '';
-    pages.value = '';
-    read.checked = false;
-}
+
+

@@ -13,7 +13,7 @@ html, body {
 
 body {
     background-color: #1a1a1a;
-    background-image: linear-gradient(to bottom, rgba(0 ,0 , 0, 0.7), rgba(0 ,0 , 0, 0.7)),
+    background-image: linear-gradient(to bottom, rgba(0 ,0 , 0, 0.8), rgba(0 ,0 , 0, 0.8)),
                       url(images/books.jpeg);
     background-size: cover;
 }
@@ -230,4 +230,24 @@ li {
 	-webkit-transition: ease .3s;
 	-moz-transition: ease .3s;
 	-o-transition: ease .3s;
+}
+
+#title:invalid,
+#author:invalid {
+    background-color: #ffcccc;
+    box-shadow: 0 0 10px 5px  #ffcccc;
+}
+
+#title:valid,
+#author:valid {
+    background-color: #d9ffcc;
+    box-shadow: 0 0 10px 5px  #d9ffcc;
+}
+
+
+span {
+    font-size: 1.2rem;
+    color: yellow;
+    font-family: 'Times New Roman', Times, serif;
+
 }
