@@ -18,12 +18,6 @@ body {
     background-size: cover;
 }
 
-#body {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    height: 100%;
-}
-
 #header {
     grid-column: 1 / 2;
     padding: 12px;
@@ -88,6 +82,7 @@ li {
 }
 
 #cards {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 12px;
@@ -250,4 +245,16 @@ span {
     color: yellow;
     font-family: 'Times New Roman', Times, serif;
 
+}
+
+#content {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    height: 100%;
+
+}
+
+
+.hidden {
+    visibility: hidden;
 }

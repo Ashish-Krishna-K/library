@@ -1,17 +1,22 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, setDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCVqBZrtDBueWH-Wp9LckQu8JuRJpctkv0",
-  authDomain: "odin-library-6ac7d.firebaseapp.com",
-  projectId: "odin-library-6ac7d",
-  storageBucket: "odin-library-6ac7d.appspot.com",
-  messagingSenderId: "582111750986",
-  appId: "1:582111750986:web:30fbb157fe83485af3efb3"
-};
+    apiKey: "AIzaSyCVqBZrtDBueWH-Wp9LckQu8JuRJpctkv0",
+    authDomain: "odin-library-6ac7d.firebaseapp.com",
+    projectId: "odin-library-6ac7d",
+    storageBucket: "odin-library-6ac7d.appspot.com",
+    messagingSenderId: "582111750986",
+    appId: "1:582111750986:web:30fbb157fe83485af3efb3"
+  };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+let currentUser = null;
 
 const domElements = {
     form: document.getElementById('input-form'),
@@ -24,7 +29,12 @@ const domElements = {
     clear: document.getElementById('clear'),
     titleError: document.querySelector('#error-title'),
     authorError: document.querySelector('#error-author'),
-
+    contentPage: document.querySelector('#content'),
+    loginBtn: document.querySelector('#login-button'),
+    logoutBtn: document.querySelector('#logout-button'),
+    currentUserName: document.querySelector('#current-username'),
+    profilePic: document.querySelector('#dp'),
+    displayUser: document.querySelector('#user')
 }
 
 const errorMessages = {
@@ -32,40 +42,70 @@ const errorMessages = {
     blankAuthor: 'Please provide a valid author name',
 }
 
-
-let myLibrary = [];
-
 class Book {
-    constructor (title, author, pages, status) {
+    constructor (title, author, pages, status, id) {
     this.title = title,
     this.author = author,
     this.pages = pages,
-    this.status = status
+    this.status = status,
+    this.id = id
     };
 };
 
-function addBookToDatabase (book) {
+class User {
+    constructor(userName, userEmail, userDP, userUID) {
+        this.name = userName,
+        this.email = userEmail,
+        this.image = userDP,
+        this.userId = userUID
+    }
+}
+
+async function userLogin() {
     try {
-        const bookAdded = addDoc(collection(db, "books"), {
-            title: book.inputTitle,
-            author: book.inputAuthor,
-            pages: book.inputPages,
-            readStatus: book.inputRead
-        });
-        console.log('book added');
+        const user = await signInWithPopup(auth, provider);
+        currentUser = new User(auth.currentUser.displayName, auth.currentUser.email, auth.currentUser.photoURL, auth.currentUser.uid);
+        renderPage();
+        renderUser(true);
+    } catch(error) {
+        console.log(error)
+    }
+}
+
+async function userLogout() {
+    try {
+        const logout = await signOut(auth);
+        console.log('user has logged out');
+        renderUser(false);
+        renderPage();
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+async function addBookToDatabase (book) {
+    try {
+        const bookAdded = await addDoc(collection(db, currentUser.name), book);
+        console.log('book added', bookAdded.id);
     } catch(error) {
         console.log(error)
     }
 }
 
 async function getBooksFromDatabase () {
-    const booksFromDB = await getDocs(collection(db, "books"));
-    booksFromDB.forEach(item => {
+    const booksFromDB = await getDocs(collection(db, currentUser.name));
+    return booksFromDB.docs.map(item => {
         const book = item._document.data.value.mapValue.fields;
-        const { title, author, pages, readStatus } = book;
-        myLibrary.push(new Book(title.stringValue, author.stringValue, pages.stringValue, readStatus.booleanValue));
+        const { inputTitle, inputAuthor, inputPages, inputRead } = book;
+        return new Book(inputTitle.stringValue, inputAuthor.stringValue, inputPages.stringValue, inputRead.booleanValue, item.id);
     });
 }
+
+async function deleteBookFromDatabase (id) {
+    await deleteDoc(doc(db, currentUser.name, id));
+    console.log('book deleted: ', id)
+}
+
 domElements.title.addEventListener('blur', function(){
     if (title.validity.valid) {
     domElements.titleError.textContent = '';
@@ -86,7 +126,23 @@ clear.addEventListener('click', clearAll)
 
 submit.addEventListener('click', createBooks);
 
-async function createBooks() {
+domElements.loginBtn.addEventListener('click', userLogin)
+
+domElements.logoutBtn.addEventListener('click', userLogout);
+
+function renderUser(status) {
+    if (status) {
+        domElements.currentUserName.textContent = currentUser.name;
+        domElements.profilePic.setAttribute('src', currentUser.image);
+    } else {
+        domElements.currentUserName.textContent = '';
+        domElements.profilePic.removeAttribute('src');
+        domElements.displayUser.classList.add('hidden');
+        domElements.loginBtn.classList.remove('hidden');
+    }
+}
+
+function createBooks() {
 
     if (!title.validity.valid) {
         domElements.titleError.textContent = errorMessages.blankTitle;
@@ -110,6 +166,7 @@ async function createBooks() {
 
     addBookToDatabase(storeinDB);
     clearAll();
+    renderPage();
 };
 
 function clearAll() {
@@ -120,7 +177,7 @@ function clearAll() {
 }
 
 function createCards(book) {
-
+    console.log(book);
     const deleteBook = document.createElement('button');
     const statusToggle = document.createElement('input');
 
@@ -129,7 +186,7 @@ function createCards(book) {
 
     divBook.appendChild(deleteBook);
     deleteBook.classList.add('delete');
-    deleteBook.dataset.book = book.title;
+    deleteBook.dataset.id = book.id;
 
     const bookTitle = document.createElement('div');
     bookTitle.classList.add('title');
@@ -155,16 +212,12 @@ function createCards(book) {
 
     book.status ? divBook.classList.add('read') : divBook.classList.add('not-read');
 
-    domElements.cardArea.appendChild(divBook);
 
     const deleteButton = divBook.querySelector('.delete');
 
     deleteButton.addEventListener('click', function() {
-        let currentBook = this.dataset.book;
-        let delIndex = myLibrary.findIndex(object => {
-            return object.title === currentBook;
-        });
-        myLibrary.splice(delIndex, 1);
+        let currentBook = this.dataset.id;
+        deleteBookFromDatabase(currentBook);
         this.parentNode.remove();
     });
 
@@ -180,6 +233,8 @@ function createCards(book) {
             this.parentNode.classList.add('not-read')    
         }
     });
+    
+    domElements.cardArea.appendChild(divBook);
 
     return {
         deleteButton,
@@ -189,8 +244,26 @@ function createCards(book) {
 };
 
 async function renderPage() {
-    await getBooksFromDatabase();
-    myLibrary.forEach(book => createCards(book));
+    if (auth.currentUser === null) {
+        domElements.contentPage.classList.add('hidden');
+        return;
+    } 
+
+    domElements.loginBtn.classList.add('hidden');
+    // domElements.logoutBtn.classList.remove('hidden');
+    domElements.displayUser.classList.remove('hidden');
+    domElements.contentPage.classList.remove('hidden');
+
+    const library = await getBooksFromDatabase();
+
+    if (domElements.cardArea.hasChildNodes()) {
+
+        domElements.cardArea.childNodes.forEach(child => {
+            child.remove();
+        });
+    }
+
+    library.forEach(book => createCards(book));
 }
 
 renderPage();
