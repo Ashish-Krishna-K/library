@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "firebase": "^9.14.0"
+  },
+  "name": "library",
+  "description": "This is a project for The Odin Project to create a library of books.",
+  "version": "1.0.0",
+  "main": "script.js",
+  "devDependencies": {
+    "cli": "^1.0.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-Krishna-K/library.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ashish-Krishna-K/library/issues"
+  },
+  "homepage": "https://github.com/Ashish-Krishna-K/library#readme"
+}
