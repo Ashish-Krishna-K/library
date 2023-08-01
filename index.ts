@@ -27,8 +27,8 @@ const addBookToLibrary = (book:Book) => {
     library.push(book);
 }
 // Create a removeBookFromLibrary function
-const removeBookFromLibrary = (book:Book) => {
-    library = library.filter(item => JSON.stringify(item) !== JSON.stringify(book));
+const removeBookFromLibrary = (bookIndex:number) => {
+    library.splice(bookIndex, 1);
 }
 // Create a render function to handle rhe re-render
 const resetDisplayDiv = () => {
