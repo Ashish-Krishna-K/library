@@ -62,6 +62,8 @@ var createBookCard = function (book, index) {
         removeBookFromLibrary(parseInt(ev.target.value));
         render();
     });
+    removeBookBtn.textContent = "Remove";
+    bookDiv.appendChild(removeBookBtn);
     bookDiv.setAttribute('data-index', index);
     return bookDiv;
 };
@@ -94,7 +96,12 @@ submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
     var newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
     library.push(newBook);
-    render();
     clearForm();
+    render();
 });
 render();
+document.querySelector('input.book-read-status')
+    .addEventListener("change", function (ev) {
+    var target = ev.target;
+    changeBookReadStatus(Number(target.dataset.index), target.checked);
+});

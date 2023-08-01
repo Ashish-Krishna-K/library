@@ -47,23 +47,28 @@ const createBookCard = (book: Book, index: string) => {
     // create book-card div
     const bookDiv = document.createElement('div');
     bookDiv.classList.add('book-card');
+
     const titleDisplay = document.createElement('p');
     titleDisplay.classList.add('book-title');
     titleDisplay.textContent = book.title;
     bookDiv.appendChild(titleDisplay);
+
     const authorDisplay = document.createElement('p');
     authorDisplay.classList.add('book-author');
     authorDisplay.textContent = book.author;
     bookDiv.appendChild(authorDisplay);
+
     const pagesDisplay = document.createElement('p');
     pagesDisplay.classList.add('book-pages');
     pagesDisplay.textContent = book.numOfPages.toString();
     bookDiv.appendChild(pagesDisplay);
+
     const readStatusDisplay = document.createElement('input') as HTMLInputElement;
     readStatusDisplay.type = "checkbox";
     readStatusDisplay.classList.add('book-read-status');
     readStatusDisplay.checked = book.isRead;
     bookDiv.appendChild(readStatusDisplay);
+
     const removeBookBtn = document.createElement('button');
     removeBookBtn.classList.add('delete-book');
     removeBookBtn.value = index;
@@ -71,6 +76,9 @@ const createBookCard = (book: Book, index: string) => {
         removeBookFromLibrary(parseInt((ev.target as HTMLButtonElement).value));
         render();
     });
+    removeBookBtn.textContent = "Remove";
+    bookDiv.appendChild(removeBookBtn);
+
     bookDiv.setAttribute('data-index', index);
     return bookDiv;
 }
@@ -102,6 +110,7 @@ addBookToLibrary(book1);
 addBookToLibrary(book2);
 
 // addBookBtn.addEventListener("click", )
+
 submitBtn.addEventListener("click", (ev: Event) => {
     ev.preventDefault();
     const newBook =
@@ -113,4 +122,8 @@ submitBtn.addEventListener("click", (ev: Event) => {
 
 render();
 
-
+(document.querySelector('input.book-read-status') as HTMLInputElement)
+    .addEventListener("change", (ev) => {
+        const target = ev.target as HTMLInputElement;
+        changeBookReadStatus(Number(target.dataset.index), target.checked);
+    });
