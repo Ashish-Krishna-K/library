@@ -8,6 +8,42 @@
     <title>My Library</title>
 </head>
 <body>
-    
+    <header>
+        <h1>My Library</h1>
+    </header>
+    <main>
+        <section id="add-books">
+            <button class="add-book">Add New Book</button>
+            <form action="#">
+                <div class="input-pair">
+                    <label for="title">Book Title</label>
+                    <input type="text" name="title" id="title">
+                </div>
+                <div class="input-pair">
+                    <label for="author">Book Author</label>
+                    <input type="text" name="author" id="author">
+                </div>
+                <div class="input-pair">
+                    <label for="pages">Number of Pages</label>
+                    <input type="number" name="pages" id="pages">
+                </div>
+                <div class="input-pair">
+                    <label for="read-status">Have you read it?</label>
+                    <input type="checkbox" name="read-status" id="read-status">
+                </div>
+                <div class="buttons">
+                    <button type="submit" class="submit">Add</button>
+                    <button type="reset" class="reset">Clear</button>
+                    <button type="button" class="cancel">Cancel</button>    
+                </div>
+            </form>
+        </section>
+        <section id="display-books">
+            <div class="display-books-wrapper"></div>
+        </section>
+    </main>
+    <footer>
+        <p>Project by <a href="https://github.com/Ashish-Krishna-K">Ashish-Krishna-K</a></p>
+    </footer>
 </body>
 </html>
