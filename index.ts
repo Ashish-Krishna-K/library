@@ -8,31 +8,31 @@ const cancelBtn = document.querySelector('button.cancel') as HTMLButtonElement;
 const displayBooksDiv = document.querySelector('div.display-books-wrapper') as HTMLDivElement;
 
 // Create a library array
-let library:Book[] = [];
+let library: Book[] = [];
 // Create a book constructor
 interface Book {
     title: string;
     author: string;
     numOfPages: number;
-    isRead:boolean;
-    toggleReadStatus(status:boolean): void;
+    isRead: boolean;
+    toggleReadStatus(status: boolean): void;
 }
-const Book = function(this: Book, title:string, author:string, pages:number, readStatus:boolean) {
+const Book = function (this: Book, title: string, author: string, pages: number, readStatus: boolean) {
     this.title = title;
     this.author = author;
     this.numOfPages = pages;
     this.isRead = readStatus;
 }
 // Create a method on the book object to edit isRead field
-Book.prototype.toggleReadStatus = function (status:boolean) {
+Book.prototype.toggleReadStatus = function (status: boolean) {
     this.isRead = status;
 }
 // Create a addBookToLibrary function
-const addBookToLibrary = (book:Book) => {
+const addBookToLibrary = (book: Book) => {
     library.push(book);
 }
 // Create a removeBookFromLibrary function
-const removeBookFromLibrary = (bookIndex:number) => {
+const removeBookFromLibrary = (bookIndex: number) => {
     library.splice(bookIndex, 1);
 }
 // Create a render function to handle rhe re-render
@@ -41,7 +41,7 @@ const resetDisplayDiv = () => {
     // from displayBooksDiv
     displayBooksDiv.replaceChildren();
 }
-const createBookCard = (book:Book) => {
+const createBookCard = (book: Book, index: string) => {
     // A helper function that creates a div element for the 
     // book object passed as argument and returns the newly
     // create book-card div
@@ -59,21 +59,40 @@ const createBookCard = (book:Book) => {
     pagesDisplay.classList.add('book-pages');
     pagesDisplay.textContent = book.numOfPages.toString();
     bookDiv.appendChild(pagesDisplay);
-    const readStatusDisplay = document.createElement('input[type="checkbox"]') as HTMLInputElement;
+    const readStatusDisplay = document.createElement('input') as HTMLInputElement;
+    readStatusDisplay.type = "checkbox";
     readStatusDisplay.classList.add('book-read-status');
     readStatusDisplay.checked = book.isRead;
     bookDiv.appendChild(readStatusDisplay);
+    const removeBookBtn = document.createElement('button');
+    removeBookBtn.classList.add('delete-book');
+    removeBookBtn.value = index;
+    removeBookBtn.addEventListener("click", (ev) => {
+        removeBookFromLibrary(parseInt((ev.target as HTMLButtonElement).value));
+        render();
+    });
+    bookDiv.setAttribute('data-index', index);
     return bookDiv;
-} 
+}
 const render = () => {
     resetDisplayDiv();
-    library.forEach(book => {
-        displayBooksDiv.appendChild(createBookCard(book));
+    library.forEach((book, index) => {
+        const bookCard = createBookCard(book, index.toString());
+        displayBooksDiv.appendChild(bookCard);
     })
 }
 // Create a function to edit the bookReadStatus
-const changeBookReadStatus = (bookIndex:number, status:boolean) => {
+const changeBookReadStatus = (bookIndex: number, status: boolean) => {
     library[bookIndex].toggleReadStatus(status);
+}
+
+// Create a function that clears all the input elemnts to it's default
+// value
+const clearForm = () => {
+    titleInput.value = '';
+    authorInput.value = '';
+    pagesInput.value = '';
+    readStatusInput.checked = false;
 }
 
 // Create dummy book data and add to library
@@ -82,5 +101,16 @@ const book2 = new (Book as any)('sample book', 'unknown', 50, true);
 addBookToLibrary(book1);
 addBookToLibrary(book2);
 
+// addBookBtn.addEventListener("click", )
+submitBtn.addEventListener("click", (ev: Event) => {
+    ev.preventDefault();
+    const newBook =
+        new (Book as any)(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
+    library.push(newBook);
+    clearForm();
+    render();
+});
+
+render();
 
 
