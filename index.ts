@@ -14,13 +14,18 @@ interface Book {
     title: string;
     author: string;
     numOfPages: number;
-    isRead:boolean
+    isRead:boolean;
+    toggleReadStatus(status:boolean): void;
 }
 const Book = function(this: Book, title:string, author:string, pages:number, readStatus:boolean) {
     this.title = title;
     this.author = author;
     this.numOfPages = pages;
     this.isRead = readStatus;
+}
+// Create a method on the book object to edit isRead field
+Book.prototype.toggleReadStatus = function (status:boolean) {
+    this.isRead = status;
 }
 // Create a addBookToLibrary function
 const addBookToLibrary = (book:Book) => {
@@ -66,3 +71,16 @@ const render = () => {
         displayBooksDiv.appendChild(createBookCard(book));
     })
 }
+// Create a function to edit the bookReadStatus
+const changeBookReadStatus = (bookIndex:number, status:boolean) => {
+    library[bookIndex].toggleReadStatus(status);
+}
+
+// Create dummy book data and add to library
+const book1 = new (Book as any)('sample book', 'unknown', 2, false);
+const book2 = new (Book as any)('sample book', 'unknown', 50, true);
+addBookToLibrary(book1);
+addBookToLibrary(book2);
+
+
+
