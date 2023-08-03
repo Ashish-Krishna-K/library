@@ -72,6 +72,7 @@ const createBookCard = (book: Book, index: string) => {
         readStatusDisplayCheckbox.type = "checkbox";
         readStatusDisplayCheckbox.classList.add('book-read-status');
         readStatusDisplayCheckbox.checked = book.isRead;
+        readStatusDisplayCheckbox.setAttribute('data-index', index);
         readStatusDisplay.appendChild(readStatusDisplayCheckbox);
         const notReadDisplay = document.createElement('span') as HTMLSpanElement;
         notReadDisplay.textContent = "NOT READ";

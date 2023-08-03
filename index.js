@@ -59,6 +59,7 @@ var createBookCard = function (book, index) {
     readStatusDisplayCheckbox.type = "checkbox";
     readStatusDisplayCheckbox.classList.add('book-read-status');
     readStatusDisplayCheckbox.checked = book.isRead;
+    readStatusDisplayCheckbox.setAttribute('data-index', index);
     readStatusDisplay.appendChild(readStatusDisplayCheckbox);
     var notReadDisplay = document.createElement('span');
     notReadDisplay.textContent = "NOT READ";
