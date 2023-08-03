@@ -61,13 +61,21 @@ const createBookCard = (book: Book, index: string) => {
 
     const pagesDisplay = document.createElement('p');
     pagesDisplay.classList.add('book-pages');
-    pagesDisplay.textContent = book.numOfPages.toString();
+    pagesDisplay.textContent = book.numOfPages + ' pages';
     bookDiv.appendChild(pagesDisplay);
 
-    const readStatusDisplay = document.createElement('input') as HTMLInputElement;
-    readStatusDisplay.type = "checkbox";
-    readStatusDisplay.classList.add('book-read-status');
-    readStatusDisplay.checked = book.isRead;
+    const readStatusDisplay = document.createElement('div') as HTMLDivElement;
+        const readDisplay = document.createElement('span') as HTMLSpanElement;
+        readDisplay.textContent = "READ";
+        readStatusDisplay.appendChild(readDisplay);
+        const readStatusDisplayCheckbox = document.createElement('input') as HTMLInputElement;
+        readStatusDisplayCheckbox.type = "checkbox";
+        readStatusDisplayCheckbox.classList.add('book-read-status');
+        readStatusDisplayCheckbox.checked = book.isRead;
+        readStatusDisplay.appendChild(readStatusDisplayCheckbox);
+        const notReadDisplay = document.createElement('span') as HTMLSpanElement;
+        notReadDisplay.textContent = "NOT READ";
+        readStatusDisplay.appendChild(notReadDisplay);
     bookDiv.appendChild(readStatusDisplay);
 
     const removeBookBtn = document.createElement('button');
