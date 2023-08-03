@@ -5,6 +5,7 @@ var pagesInput = document.querySelector('input#pages');
 var readStatusInput = document.querySelector('input#read-status');
 var submitBtn = document.querySelector('button.submit');
 var cancelBtn = document.querySelector('button.cancel');
+var addBookModal = document.querySelector('div.modal');
 var displayBooksDiv = document.querySelector('div.display-books-wrapper');
 // Create a library array
 var library = [];
@@ -91,7 +92,12 @@ var book1 = new Book('sample book', 'unknown', 2, false);
 var book2 = new Book('sample book', 'unknown', 50, true);
 addBookToLibrary(book1);
 addBookToLibrary(book2);
-// addBookBtn.addEventListener("click", )
+addBookBtn.addEventListener("click", function (ev) {
+    addBookModal.classList.remove('hidden');
+});
+cancelBtn.addEventListener("click", function (ev) {
+    addBookModal.classList.add('hidden');
+});
 submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
     var newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);

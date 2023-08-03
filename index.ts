@@ -5,6 +5,7 @@ const pagesInput = document.querySelector('input#pages') as HTMLInputElement;
 const readStatusInput = document.querySelector('input#read-status') as HTMLInputElement;
 const submitBtn = document.querySelector('button.submit') as HTMLButtonElement;
 const cancelBtn = document.querySelector('button.cancel') as HTMLButtonElement;
+const addBookModal = document.querySelector('div.modal') as HTMLDivElement;
 const displayBooksDiv = document.querySelector('div.display-books-wrapper') as HTMLDivElement;
 
 // Create a library array
@@ -109,7 +110,13 @@ const book2 = new (Book as any)('sample book', 'unknown', 50, true);
 addBookToLibrary(book1);
 addBookToLibrary(book2);
 
-// addBookBtn.addEventListener("click", )
+addBookBtn.addEventListener("click", (ev) => {
+    addBookModal.classList.remove('hidden');
+})
+
+cancelBtn.addEventListener("click", (ev) => {
+    addBookModal.classList.add('hidden');
+})
 
 submitBtn.addEventListener("click", (ev: Event) => {
     ev.preventDefault();
