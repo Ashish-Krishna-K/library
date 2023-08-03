@@ -9,7 +9,7 @@ const addBookModal = document.querySelector('div.modal') as HTMLDivElement;
 const displayBooksDiv = document.querySelector('div.display-books-wrapper') as HTMLDivElement;
 
 // Create a library array
-let library: Book[] = [];
+const library: Book[] = [];
 // Create a book constructor
 interface Book {
     title: string;
