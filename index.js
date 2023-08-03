@@ -1,3 +1,4 @@
+var _a;
 var addBookBtn = document.querySelector('button.add-book');
 var titleInput = document.querySelector('input#title');
 var authorInput = document.querySelector('input#author');
@@ -16,8 +17,8 @@ var Book = function (title, author, pages, readStatus) {
     this.isRead = readStatus;
 };
 // Create a method on the book object to edit isRead field
-Book.prototype.toggleReadStatus = function (status) {
-    this.isRead = status;
+Book.prototype.toggleReadStatus = function () {
+    this.isRead = !this.isRead;
 };
 // Create a addBookToLibrary function
 var addBookToLibrary = function (book) {
@@ -41,7 +42,7 @@ var createBookCard = function (book, index) {
     bookDiv.classList.add('book-card');
     var titleDisplay = document.createElement('p');
     titleDisplay.classList.add('book-title');
-    titleDisplay.textContent = book.title;
+    titleDisplay.textContent = "\"".concat(book.title, "\"");
     bookDiv.appendChild(titleDisplay);
     var authorDisplay = document.createElement('p');
     authorDisplay.classList.add('book-author');
@@ -51,19 +52,24 @@ var createBookCard = function (book, index) {
     pagesDisplay.classList.add('book-pages');
     pagesDisplay.textContent = book.numOfPages + ' pages';
     bookDiv.appendChild(pagesDisplay);
-    var readStatusDisplay = document.createElement('div');
-    var readDisplay = document.createElement('span');
-    readDisplay.textContent = "READ";
-    readStatusDisplay.appendChild(readDisplay);
-    var readStatusDisplayCheckbox = document.createElement('input');
-    readStatusDisplayCheckbox.type = "checkbox";
-    readStatusDisplayCheckbox.classList.add('book-read-status');
-    readStatusDisplayCheckbox.checked = book.isRead;
-    readStatusDisplayCheckbox.setAttribute('data-index', index);
-    readStatusDisplay.appendChild(readStatusDisplayCheckbox);
-    var notReadDisplay = document.createElement('span');
-    notReadDisplay.textContent = "NOT READ";
-    readStatusDisplay.appendChild(notReadDisplay);
+    var readStatusDisplay = document.createElement('button');
+    readStatusDisplay.classList.add('read-status-btn');
+    readStatusDisplay.value = index;
+    if (book.isRead) {
+        readStatusDisplay.classList.add('book-read');
+        readStatusDisplay.classList.remove('book-notread');
+        readStatusDisplay.textContent = "READ";
+    }
+    else {
+        readStatusDisplay.classList.add('book-notread');
+        readStatusDisplay.classList.remove('book-read');
+        readStatusDisplay.textContent = "NOT READ";
+    }
+    readStatusDisplay.addEventListener("click", function (ev) {
+        var target = ev.target;
+        changeBookReadStatus(Number(target.value));
+        render();
+    });
     bookDiv.appendChild(readStatusDisplay);
     var removeBookBtn = document.createElement('button');
     removeBookBtn.classList.add('delete-book');
@@ -85,8 +91,8 @@ var render = function () {
     });
 };
 // Create a function to edit the bookReadStatus
-var changeBookReadStatus = function (bookIndex, status) {
-    library[bookIndex].toggleReadStatus(status);
+var changeBookReadStatus = function (bookIndex) {
+    library[bookIndex].toggleReadStatus();
 };
 // Create a function that clears all the input elemnts to it's default
 // value
@@ -96,27 +102,25 @@ var clearForm = function () {
     pagesInput.value = '';
     readStatusInput.checked = false;
 };
-// Create dummy book data and add to library
-var book1 = new Book('sample book', 'unknown', 2, false);
-var book2 = new Book('sample book', 'unknown', 50, true);
-addBookToLibrary(book1);
-addBookToLibrary(book2);
-addBookBtn.addEventListener("click", function (ev) {
+var handleCancelBtnClick = function () {
+    addBookModal.classList.add('hidden');
+};
+addBookBtn.addEventListener("click", function () {
     addBookModal.classList.remove('hidden');
 });
-cancelBtn.addEventListener("click", function (ev) {
-    addBookModal.classList.add('hidden');
+cancelBtn.addEventListener("click", handleCancelBtnClick);
+addBookModal.addEventListener("click", handleCancelBtnClick);
+(_a = document.querySelector('form#add-book-form')) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function (ev) {
+    ev.stopPropagation();
 });
 submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
+    if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '')
+        return;
     var newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
     library.push(newBook);
     clearForm();
     render();
+    handleCancelBtnClick();
 });
 render();
-document.querySelector('input.book-read-status')
-    .addEventListener("change", function (ev) {
-    var target = ev.target;
-    changeBookReadStatus(Number(target.dataset.index), target.checked);
-});

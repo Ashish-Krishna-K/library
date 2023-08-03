@@ -141,14 +141,23 @@ table {
     box-sizing: border-box;
 }
 
+button {
+    font-family: inherit;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
 html,
 body {
-    min-height: 100svh;
+    height: 100svh;
+    font-family: 'Oswald', sans-serif;
+    background-color: #FFD2D7;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 5rem 1fr 5rem;
 }
 
 header,
@@ -157,52 +166,244 @@ footer {
     width: 100%;
 }
 
+header,
+footer {
+    background-color: #322653;
+    color: #FFD2D7;
+}
+
 header {
     text-align: center;
     padding: 16px;
-    outline: 1px solid black;
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 3rem;
+    font-weight: 700;
 }
 
 main {
     flex: 1;
     display: grid;
-    grid-template-rows: 1fr 9fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: 5rem 1fr;
     padding: 16px;
+    overflow: auto;
 }
 
 section#add-books {
     display: grid;
     justify-content: center;
     align-items: center;
+    padding: 16px;
+}
+
+.modal {
+    position: absolute;
+    z-index: 10;
+    opacity: 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    transition: opacity 500ms ease-in-out,
+    visibility 505ms ease-in-out;
+}
+
+button.add-book {
+    font-size: 2rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 8px 36px;
+    color: #322653;
+}
+
+button.add-book:hover {
+    background-color: #322653;
+    color: #FFD2D7;
+    transition: background 0.2s ease-in-out,
+    color 0.2s ease-in-out;
 }
 
 form#add-book-form {
-    margin: 8px;
-    padding: 8px;
+    padding: 32px 60px;
     display: grid;
     grid-template-rows: repeat(5, 1fr);
-    gap: 8px;
     align-items: center;
+    justify-content: space-around;
     justify-items: center;
     outline: 1px solid black;
+    background-color: #FFD2D7;
+    color: #322653;
+    border-radius: 16px;
 }
 
-div.input-pair {
+h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+input {
+    min-height: 32px;
+    border-radius: 8px;
+    padding: 2px;
+    color: #322653;
+    font-weight: 500;
+    /* border: 1px solid #322653; */
+}
+
+input::placeholder {
+    color: #322653;
+}
+
+div.form-header {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
 }
 
-div.checkbox {
+button.cancel {
+    width: 20px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button.cancel svg {
+    width: 30px;
+    margin: 0;
+    fill: #322653;
+}
+
+div.input-pair.checkbox {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
     align-items: center;
+}
+
+div.input-pair.checkbox>label {
+    font-weight: 700;
+}
+
+input#read-status {
+    width: 20px;
+    height: 20px;
+}
+
+input#read-status:checked {
+    background:none;
+    accent-color: #322653;
+}
+
+div.buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    width: 75%;
+}
+
+div.buttons>button {
+    background-color: #322653;
+    color: #FFD2D7;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 8px;
+}
+
+section#display-books {
+    overflow: auto;
+}
+
+div.display-books-wrapper {
+    margin: auto;
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+div.book-card {
+    outline: 1px solid black;
+    margin: 16px;
+    max-width: 300px;
+    height: 250px;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    border-radius: 12px;
+    background-color: #8062D6;
+    color: white;
+}
+
+button.read-status-btn,
+button.delete-book {
+    width: 50%;
+    padding: 4px 12px;
+    color: yellow;
+    border: 2px solid #322653;
+}
+
+.book-read {
+    background-color: lightgreen;
+    color: #322653 !important;
+}
+
+.book-notread {
+    background-color: lightcoral;
+    color: white !important;
+}
+
+.delete-book {
+    background-color: rgba(255, 0, 0, 0.8);
 }
 
 footer {
-    text-align: center;
-    font-size: 1.5rem;
-    padding: 16px;
-    outline: 1px solid black;
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
+
+footer a,
+footer a:visited {
+    color: yellow;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+/* Below scrollbar styling was directly copied from stackoverflow */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #FFD2D7;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #322653;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

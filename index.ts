@@ -16,7 +16,7 @@ interface Book {
     author: string;
     numOfPages: number;
     isRead: boolean;
-    toggleReadStatus(status: boolean): void;
+    toggleReadStatus(): void;
 }
 const Book = function (this: Book, title: string, author: string, pages: number, readStatus: boolean) {
     this.title = title;
@@ -25,8 +25,8 @@ const Book = function (this: Book, title: string, author: string, pages: number,
     this.isRead = readStatus;
 }
 // Create a method on the book object to edit isRead field
-Book.prototype.toggleReadStatus = function (status: boolean) {
-    this.isRead = status;
+Book.prototype.toggleReadStatus = function () {
+    this.isRead = !this.isRead;
 }
 // Create a addBookToLibrary function
 const addBookToLibrary = (book: Book) => {
@@ -51,7 +51,7 @@ const createBookCard = (book: Book, index: string) => {
 
     const titleDisplay = document.createElement('p');
     titleDisplay.classList.add('book-title');
-    titleDisplay.textContent = book.title;
+    titleDisplay.textContent = `"${book.title}"`;
     bookDiv.appendChild(titleDisplay);
 
     const authorDisplay = document.createElement('p');
@@ -64,19 +64,23 @@ const createBookCard = (book: Book, index: string) => {
     pagesDisplay.textContent = book.numOfPages + ' pages';
     bookDiv.appendChild(pagesDisplay);
 
-    const readStatusDisplay = document.createElement('div') as HTMLDivElement;
-        const readDisplay = document.createElement('span') as HTMLSpanElement;
-        readDisplay.textContent = "READ";
-        readStatusDisplay.appendChild(readDisplay);
-        const readStatusDisplayCheckbox = document.createElement('input') as HTMLInputElement;
-        readStatusDisplayCheckbox.type = "checkbox";
-        readStatusDisplayCheckbox.classList.add('book-read-status');
-        readStatusDisplayCheckbox.checked = book.isRead;
-        readStatusDisplayCheckbox.setAttribute('data-index', index);
-        readStatusDisplay.appendChild(readStatusDisplayCheckbox);
-        const notReadDisplay = document.createElement('span') as HTMLSpanElement;
-        notReadDisplay.textContent = "NOT READ";
-        readStatusDisplay.appendChild(notReadDisplay);
+    const readStatusDisplay = document.createElement('button') as HTMLButtonElement;
+    readStatusDisplay.classList.add('read-status-btn');
+    readStatusDisplay.value = index;
+    if (book.isRead) {
+        readStatusDisplay.classList.add('book-read');
+        readStatusDisplay.classList.remove('book-notread');
+        readStatusDisplay.textContent = "READ"
+    } else {
+        readStatusDisplay.classList.add('book-notread');
+        readStatusDisplay.classList.remove('book-read');
+        readStatusDisplay.textContent = "NOT READ";
+    }
+    readStatusDisplay.addEventListener("click", (ev) => {
+        const target = ev.target as HTMLButtonElement;
+        changeBookReadStatus(Number(target.value));
+        render();
+    });
     bookDiv.appendChild(readStatusDisplay);
 
     const removeBookBtn = document.createElement('button');
@@ -100,8 +104,8 @@ const render = () => {
     })
 }
 // Create a function to edit the bookReadStatus
-const changeBookReadStatus = (bookIndex: number, status: boolean) => {
-    library[bookIndex].toggleReadStatus(status);
+const changeBookReadStatus = (bookIndex: number) => {
+    library[bookIndex].toggleReadStatus();
 }
 
 // Create a function that clears all the input elemnts to it's default
@@ -113,33 +117,30 @@ const clearForm = () => {
     readStatusInput.checked = false;
 }
 
-// Create dummy book data and add to library
-const book1 = new (Book as any)('sample book', 'unknown', 2, false);
-const book2 = new (Book as any)('sample book', 'unknown', 50, true);
-addBookToLibrary(book1);
-addBookToLibrary(book2);
+const handleCancelBtnClick = () => {
+    addBookModal.classList.add('hidden');
+};
 
-addBookBtn.addEventListener("click", (ev) => {
+addBookBtn.addEventListener("click", () => {
     addBookModal.classList.remove('hidden');
 })
 
-cancelBtn.addEventListener("click", (ev) => {
-    addBookModal.classList.add('hidden');
-})
+cancelBtn.addEventListener("click", handleCancelBtnClick);
+addBookModal.addEventListener("click", handleCancelBtnClick);
+
+document.querySelector('form#add-book-form')?.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+});
 
 submitBtn.addEventListener("click", (ev: Event) => {
     ev.preventDefault();
+    if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '') return;
     const newBook =
         new (Book as any)(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
     library.push(newBook);
     clearForm();
     render();
+    handleCancelBtnClick();
 });
 
 render();
-
-(document.querySelector('input.book-read-status') as HTMLInputElement)
-    .addEventListener("change", (ev) => {
-        const target = ev.target as HTMLInputElement;
-        changeBookReadStatus(Number(target.dataset.index), target.checked);
-    });
