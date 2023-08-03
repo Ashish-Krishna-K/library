@@ -37,6 +37,6 @@ The submit button event handler will first prevent the default behaviour of the 
 
 Finally we call the render function to render the page.
 
-**__
+**
 Additional note: The styling of the scrollbar was acheived thanks to [this stackoverflow answer](https://stackoverflow.com/a/62503864) by mynamejeff
-__**
+**
