@@ -8,8 +8,23 @@ const cancelBtn = document.querySelector('button.cancel') as HTMLButtonElement;
 const addBookModal = document.querySelector('div.modal') as HTMLDivElement;
 const displayBooksDiv = document.querySelector('div.display-books-wrapper') as HTMLDivElement;
 
-// Create a library array
-const library: Book[] = [];
+class Library {
+    // Create a library array
+    static #lib: Book[] = [];
+    // Create a addBookToLibrary function
+    static addBookToLibrary(book: Book) {
+        this.#lib.push(book);
+    }
+    // Create a removeBookFromLibrary function
+    static removeBookFromLibrary(bookIndex: number) {
+        this.#lib.splice(bookIndex, 1);
+    }
+    // Create a getter function
+    static get library() {
+        return this.#lib.slice();
+    }
+}
+
 // Create a book constructor
 interface Book {
     title: string;
@@ -18,24 +33,18 @@ interface Book {
     isRead: boolean;
     toggleReadStatus(): void;
 }
-const Book = function (this: Book, title: string, author: string, pages: number, readStatus: boolean) {
-    this.title = title;
-    this.author = author;
-    this.numOfPages = pages;
-    this.isRead = readStatus;
+class Book {
+    constructor(title: string, author: string, pages: number, readStatus: boolean) {
+        this.title = title;
+        this.author = author;
+        this.numOfPages = pages;
+        this.isRead = readStatus;
+    }
+    toggleReadStatus() {
+        this.isRead = !this.isRead;
+    }
 }
-// Create a method on the book object to edit isRead field
-Book.prototype.toggleReadStatus = function () {
-    this.isRead = !this.isRead;
-}
-// Create a addBookToLibrary function
-const addBookToLibrary = (book: Book) => {
-    library.push(book);
-}
-// Create a removeBookFromLibrary function
-const removeBookFromLibrary = (bookIndex: number) => {
-    library.splice(bookIndex, 1);
-}
+
 // Create a render function to handle rhe re-render
 const resetDisplayDiv = () => {
     // A helper function to remove all current childNodes
@@ -87,7 +96,7 @@ const createBookCard = (book: Book, index: string) => {
     removeBookBtn.classList.add('delete-book');
     removeBookBtn.value = index;
     removeBookBtn.addEventListener("click", (ev) => {
-        removeBookFromLibrary(parseInt((ev.target as HTMLButtonElement).value));
+        Library.removeBookFromLibrary(parseInt((ev.target as HTMLButtonElement).value));
         render();
     });
     removeBookBtn.textContent = "Remove";
@@ -98,14 +107,14 @@ const createBookCard = (book: Book, index: string) => {
 }
 const render = () => {
     resetDisplayDiv();
-    library.forEach((book, index) => {
+    Library.library.forEach((book, index) => {
         const bookCard = createBookCard(book, index.toString());
         displayBooksDiv.appendChild(bookCard);
     })
 }
 // Create a function to edit the bookReadStatus
 const changeBookReadStatus = (bookIndex: number) => {
-    library[bookIndex].toggleReadStatus();
+    Library.library[bookIndex].toggleReadStatus();
 }
 
 // Create a function that clears all the input elemnts to it's default
@@ -137,7 +146,7 @@ submitBtn.addEventListener("click", (ev: Event) => {
     if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '') return;
     const newBook =
         new (Book as any)(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
-    library.push(newBook);
+    Library.addBookToLibrary(newBook);
     clearForm();
     render();
     handleCancelBtnClick();

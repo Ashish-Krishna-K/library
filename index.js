@@ -1,58 +1,72 @@
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
 var _a;
-var addBookBtn = document.querySelector('button.add-book');
-var titleInput = document.querySelector('input#title');
-var authorInput = document.querySelector('input#author');
-var pagesInput = document.querySelector('input#pages');
-var readStatusInput = document.querySelector('input#read-status');
-var submitBtn = document.querySelector('button.submit');
-var cancelBtn = document.querySelector('button.cancel');
-var addBookModal = document.querySelector('div.modal');
-var displayBooksDiv = document.querySelector('div.display-books-wrapper');
+var _b, _Library_lib;
+const addBookBtn = document.querySelector('button.add-book');
+const titleInput = document.querySelector('input#title');
+const authorInput = document.querySelector('input#author');
+const pagesInput = document.querySelector('input#pages');
+const readStatusInput = document.querySelector('input#read-status');
+const submitBtn = document.querySelector('button.submit');
+const cancelBtn = document.querySelector('button.cancel');
+const addBookModal = document.querySelector('div.modal');
+const displayBooksDiv = document.querySelector('div.display-books-wrapper');
+class Library {
+    // Create a addBookToLibrary function
+    static addBookToLibrary(book) {
+        __classPrivateFieldGet(this, _b, "f", _Library_lib).push(book);
+    }
+    // Create a removeBookFromLibrary function
+    static removeBookFromLibrary(bookIndex) {
+        __classPrivateFieldGet(this, _b, "f", _Library_lib).splice(bookIndex, 1);
+    }
+    // Create a getter function
+    static get library() {
+        return __classPrivateFieldGet(this, _b, "f", _Library_lib).slice();
+    }
+}
+_b = Library;
 // Create a library array
-var library = [];
-var Book = function (title, author, pages, readStatus) {
-    this.title = title;
-    this.author = author;
-    this.numOfPages = pages;
-    this.isRead = readStatus;
-};
-// Create a method on the book object to edit isRead field
-Book.prototype.toggleReadStatus = function () {
-    this.isRead = !this.isRead;
-};
-// Create a addBookToLibrary function
-var addBookToLibrary = function (book) {
-    library.push(book);
-};
-// Create a removeBookFromLibrary function
-var removeBookFromLibrary = function (bookIndex) {
-    library.splice(bookIndex, 1);
-};
+_Library_lib = { value: [] };
+class Book {
+    constructor(title, author, pages, readStatus) {
+        this.title = title;
+        this.author = author;
+        this.numOfPages = pages;
+        this.isRead = readStatus;
+    }
+    toggleReadStatus() {
+        this.isRead = !this.isRead;
+    }
+}
 // Create a render function to handle rhe re-render
-var resetDisplayDiv = function () {
+const resetDisplayDiv = () => {
     // A helper function to remove all current childNodes
     // from displayBooksDiv
     displayBooksDiv.replaceChildren();
 };
-var createBookCard = function (book, index) {
+const createBookCard = (book, index) => {
     // A helper function that creates a div element for the 
     // book object passed as argument and returns the newly
     // create book-card div
-    var bookDiv = document.createElement('div');
+    const bookDiv = document.createElement('div');
     bookDiv.classList.add('book-card');
-    var titleDisplay = document.createElement('p');
+    const titleDisplay = document.createElement('p');
     titleDisplay.classList.add('book-title');
-    titleDisplay.textContent = "\"".concat(book.title, "\"");
+    titleDisplay.textContent = `"${book.title}"`;
     bookDiv.appendChild(titleDisplay);
-    var authorDisplay = document.createElement('p');
+    const authorDisplay = document.createElement('p');
     authorDisplay.classList.add('book-author');
     authorDisplay.textContent = book.author;
     bookDiv.appendChild(authorDisplay);
-    var pagesDisplay = document.createElement('p');
+    const pagesDisplay = document.createElement('p');
     pagesDisplay.classList.add('book-pages');
     pagesDisplay.textContent = book.numOfPages + ' pages';
     bookDiv.appendChild(pagesDisplay);
-    var readStatusDisplay = document.createElement('button');
+    const readStatusDisplay = document.createElement('button');
     readStatusDisplay.classList.add('read-status-btn');
     readStatusDisplay.value = index;
     if (book.isRead) {
@@ -65,17 +79,17 @@ var createBookCard = function (book, index) {
         readStatusDisplay.classList.remove('book-read');
         readStatusDisplay.textContent = "NOT READ";
     }
-    readStatusDisplay.addEventListener("click", function (ev) {
-        var target = ev.target;
+    readStatusDisplay.addEventListener("click", (ev) => {
+        const target = ev.target;
         changeBookReadStatus(Number(target.value));
         render();
     });
     bookDiv.appendChild(readStatusDisplay);
-    var removeBookBtn = document.createElement('button');
+    const removeBookBtn = document.createElement('button');
     removeBookBtn.classList.add('delete-book');
     removeBookBtn.value = index;
-    removeBookBtn.addEventListener("click", function (ev) {
-        removeBookFromLibrary(parseInt(ev.target.value));
+    removeBookBtn.addEventListener("click", (ev) => {
+        Library.removeBookFromLibrary(parseInt(ev.target.value));
         render();
     });
     removeBookBtn.textContent = "Remove";
@@ -83,42 +97,42 @@ var createBookCard = function (book, index) {
     bookDiv.setAttribute('data-index', index);
     return bookDiv;
 };
-var render = function () {
+const render = () => {
     resetDisplayDiv();
-    library.forEach(function (book, index) {
-        var bookCard = createBookCard(book, index.toString());
+    Library.library.forEach((book, index) => {
+        const bookCard = createBookCard(book, index.toString());
         displayBooksDiv.appendChild(bookCard);
     });
 };
 // Create a function to edit the bookReadStatus
-var changeBookReadStatus = function (bookIndex) {
-    library[bookIndex].toggleReadStatus();
+const changeBookReadStatus = (bookIndex) => {
+    Library.library[bookIndex].toggleReadStatus();
 };
 // Create a function that clears all the input elemnts to it's default
 // value
-var clearForm = function () {
+const clearForm = () => {
     titleInput.value = '';
     authorInput.value = '';
     pagesInput.value = '';
     readStatusInput.checked = false;
 };
-var handleCancelBtnClick = function () {
+const handleCancelBtnClick = () => {
     addBookModal.classList.add('hidden');
 };
-addBookBtn.addEventListener("click", function () {
+addBookBtn.addEventListener("click", () => {
     addBookModal.classList.remove('hidden');
 });
 cancelBtn.addEventListener("click", handleCancelBtnClick);
 addBookModal.addEventListener("click", handleCancelBtnClick);
-(_a = document.querySelector('form#add-book-form')) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function (ev) {
+(_a = document.querySelector('form#add-book-form')) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (ev) => {
     ev.stopPropagation();
 });
-submitBtn.addEventListener("click", function (ev) {
+submitBtn.addEventListener("click", (ev) => {
     ev.preventDefault();
     if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '')
         return;
-    var newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
-    library.push(newBook);
+    const newBook = new Book(titleInput.value, authorInput.value, pagesInput.value, readStatusInput.checked);
+    Library.addBookToLibrary(newBook);
     clearForm();
     render();
     handleCancelBtnClick();
