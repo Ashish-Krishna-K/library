@@ -8,10 +8,10 @@ Library is a basic webpage that let's the user keep track of books they have rea
 
 The HTML and CSS sections are fairly staright forward, coming to the index.ts file, we start off by declaring variables for all the DOM elements we will be manipulating from JS.
 
-Next we declare a library array which holds our books.
+Next we declare a library class which holds the library array which in turn stores all the book objects and also holds methods used for working with the library array.
 
 We also declare a Book interface which helps in type casting the book object instances.
-Following that we declare the Book constructor and also declare it's only method on it's prototype
+Following that we declare the Book class.
 
 The addBookToLibrary function will add the newly created book instance in the library array.
 
